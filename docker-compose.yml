@@ -1,0 +1,30 @@
+services:
+  samba:
+    image: b0ch3nski/samba-insecure:latest
+    restart: unless-stopped
+    environment:
+      - SMB_GROUP=${SMB_GROUP}
+      - SMB_GID=${SMB_GID}
+      - SMB_USER=${SMB_USER}
+      - SMB_UID=${SMB_UID}
+      - ENABLE_AVAHI=true
+    tmpfs:
+      - /tmp
+    volumes:
+      - ~/Samba:/storage:rw
+    networks:
+      virsh:
+        ipv4_address: "10.10.21.2"
+    cpus: 1.0
+    mem_limit: 1g
+    security_opt:
+      - no-new-privileges
+
+networks:
+  virsh:
+    driver: macvlan
+    driver_opts:
+      parent: virbr1
+    ipam:
+      config:
+        - subnet: "10.10.21.0/24"
